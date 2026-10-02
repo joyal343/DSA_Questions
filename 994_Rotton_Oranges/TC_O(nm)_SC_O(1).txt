@@ -1,0 +1,67 @@
+class Solution {
+public:
+    int orangesRotting(vector<vector<int>>& grid) {
+        // we need to keep track if we have visited a place on the grid or not\
+        // we can either do this by
+        // A . creating a copy of the grid - leading to O(n) S.C.
+        // B. modifying the grid itself - O(1) Extra S.C.
+
+        // We can find all the rotton apples 
+        // Then run bfs on the rotton oranges
+        // We can store all the rotten oranges in a queue
+        // Psuedo
+        
+        // Add all rotton oranges to a queue - O(n*m)
+        // Take each rotton org 
+        // - check if you can turn the other oranges rotten (already rotten) 
+        // - if you can turn the rotten and add to the queue - O(n*m)
+
+        // The reason this will work id that
+
+        // The orange in 0,0 after it corruts 0,1 and 1,0 it has finished corrupting all the oranges it can
+        int n = grid.size();
+        int m = grid[0].size();
+        queue<pair<int,int>> q;
+        for (int i =0; i< n; i++){
+            for (int j =0; j < m; j++){
+                if (grid[i][j] == 2){
+                    q.push({i,j});
+                }
+            }    
+        }
+        int  time = 0;
+        while(!q.empty()){
+            int size = q.size();
+            for (int i =0 ; i<size; i++){
+                pair<int,int> pos = q.front();
+                // cout << "OUT:" << pos.first << " " << pos.second << " " << time << endl; 
+                q.pop();
+                // pos is rotten so we want to check up down left right
+                check(q,pos.first+1,pos.second,n,m,grid);
+                check(q,pos.first-1,pos.second,n,m,grid);
+                check(q,pos.first,pos.second+1,n,m,grid);
+                check(q,pos.first,pos.second-1,n,m,grid);
+
+            }
+            if (q.empty()){
+                break;
+            }
+            time++;
+        }
+        for (int i =0; i< n; i++){
+            for (int j =0; j < m; j++){
+                if (grid[i][j] == 1){
+                    return -1;
+                }
+            }    
+        }
+        return time;
+    }
+    void check (queue<pair<int,int>>& q, int i, int j, int n, int m, vector<vector<int>>& grid){
+        // cout << "IN:" << i << " " << j << endl; 
+        if (i<n && j<m && i>=0 && j >=0 && grid[i][j] == 1){
+            q.push({i,j});
+            grid[i][j] = 2;
+        }
+    }
+};
